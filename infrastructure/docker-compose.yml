@@ -1,0 +1,99 @@
+name: real-time-issue-tracker
+
+services:
+  # --------------------------
+  # Postgres Database
+  # --------------------------
+  postgres:
+    image: postgres:15
+    container_name: postgres
+    restart: unless-stopped
+    networks:
+      - kafka_network
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: trace
+      POSTGRES_PASSWORD: trace
+      POSTGRES_DB: trace
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "trace"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # --------------------------
+  # Kafka Broker (KRaft mode)
+  # --------------------------
+  kafka:
+    image: confluentinc/cp-kafka:8.0.4
+    container_name: kafka
+    restart: unless-stopped
+    networks:
+      - kafka_network
+    ports:
+      - "29092:9092"      # host:container - connect from host using localhost:29092
+      - "29093:9093"      # controller port
+    environment:
+      KAFKA_KRAFT_MODE: "true"
+      CLUSTER_ID: "MkU3OEVBNkEwN0kwNTAxNg=="
+      KAFKA_NODE_ID: 1
+      KAFKA_PROCESS_ROLES: broker,controller
+      KAFKA_CONTROLLER_QUORUM_VOTERS: 1@kafka:9093
+
+      # ---- LISTENERS ----
+      # INTERNAL: for inter-container communication (uses port 19092 internally)
+      # EXTERNAL: for host machine access (container port 9092 maps to host 29092)
+      KAFKA_LISTENERS: INTERNAL://0.0.0.0:19092,EXTERNAL://0.0.0.0:9092,CONTROLLER://0.0.0.0:9093
+
+      # ---- ADVERTISED ----
+      # INTERNAL: advertises kafka:19092 for containers to connect
+      # EXTERNAL: advertises localhost:29092 for host to connect (maps to container 9092)
+      KAFKA_ADVERTISED_LISTENERS: INTERNAL://kafka:19092,EXTERNAL://localhost:29092
+
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: INTERNAL:PLAINTEXT,EXTERNAL:PLAINTEXT,CONTROLLER:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: INTERNAL
+      KAFKA_CONTROLLER_LISTENER_NAMES: CONTROLLER
+
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_REPLICATION_FACTOR: 1
+      KAFKA_TRANSACTION_STATE_LOG_MIN_ISR: 1
+      KAFKA_LOG_DIRS: /var/lib/kafka/data
+    
+    volumes:
+      - kafka_data:/var/lib/kafka/data
+    healthcheck:
+      test: ["CMD", "kafka-broker-api-versions", "--bootstrap-server", "localhost:19092"]
+      interval: 10s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+
+  # --------------------------
+  # Kafka UI Dashboard
+  # --------------------------
+  kafka-ui:
+    image: provectuslabs/kafka-ui:latest
+    container_name: kafka-ui
+    restart: unless-stopped
+    networks:
+      - kafka_network
+    ports:
+      - "8000:8080"
+    depends_on:
+      kafka:
+        condition: service_healthy
+    environment:
+      KAFKA_CLUSTERS_0_NAME: trace
+      KAFKA_CLUSTERS_0_BOOTSTRAPSERVERS: kafka:19092
+      DYNAMIC_CONFIG_ENABLED: 'true'
+
+volumes:
+  pgdata:
+  kafka_data:
+
+networks:
+  kafka_network:
+    driver: bridge
