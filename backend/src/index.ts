@@ -1,4 +1,5 @@
 import express from "express";
+import cors from "cors";
 import issuesRoutes from "./routes/issues.routes";
 import webhooksRoutes from "./routes/webhooks.routes";
 import { errorHandler } from "./middlewares/error.middleware";
@@ -6,6 +7,11 @@ import { env } from "./config/env";
 
 const app = express();
 
+app.use(
+  cors({
+    origin: env.corsOrigin,
+  })
+);
 app.use(express.urlencoded({ extended: true }));
 app.use(express.json());
 
