@@ -1,5 +1,5 @@
 // Controller with dependency injection and proper error handling
-import { Request, Response, NextFunction } from "express";
+import { Request, Response } from "express";
 import { IIssueService } from "../interfaces/IIssueService";
 import { ResponseFormatter } from "../utils/response";
 import { asyncHandler } from "../middlewares/error.middleware";
@@ -13,7 +13,7 @@ export class IssueController {
   });
 
   getIssueById = asyncHandler(async (req: Request, res: Response) => {
-    const id = parseInt((Array.isArray(req.params.id) ? req.params.id[0] : req.params.id) ?? "0");
+    const id = Number(req.params.id);
     const issue = await this.issueService.getIssueById(id);
     res.status(200).json(ResponseFormatter.success(issue));
   });
@@ -24,13 +24,13 @@ export class IssueController {
   });
 
   updateIssue = asyncHandler(async (req: Request, res: Response) => {
-    const id = parseInt((Array.isArray(req.params.id) ? req.params.id[0] : req.params.id) ?? "0");
+    const id = Number(req.params.id);
     const issue = await this.issueService.updateIssue(id, req.body);
     res.status(200).json(ResponseFormatter.success(issue, "Issue updated successfully"));
   });
 
   deleteIssue = asyncHandler(async (req: Request, res: Response) => {
-    const id = parseInt((Array.isArray(req.params.id) ? req.params.id[0] : req.params.id) ?? "0");
+    const id = Number(req.params.id);
     await this.issueService.deleteIssue(id);
     res.status(200).json(ResponseFormatter.success(null, "Issue deleted successfully"));
   });

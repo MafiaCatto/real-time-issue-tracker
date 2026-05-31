@@ -4,6 +4,11 @@ import { IssueController } from "../controllers/issues.controller";
 import { IssueService } from "../services/issues.service";
 import { IssueRepository } from "../repositories/issue.repository";
 import prisma from "../prisma";
+import {
+  validateCreateIssue,
+  validateIssueId,
+  validateUpdateIssue,
+} from "../middlewares/issue-validation.middleware";
 
 // Dependency injection setup
 const issueRepository = new IssueRepository(prisma);
@@ -13,10 +18,10 @@ const issueController = new IssueController(issueService);
 const router = Router();
 
 router.get("/", issueController.getAllIssues);
-router.get("/:id", issueController.getIssueById);
-router.post("/", issueController.createIssue);
-router.put("/:id", issueController.updateIssue);
-router.delete("/:id", issueController.deleteIssue);
+router.get("/:id", validateIssueId, issueController.getIssueById);
+router.post("/", validateCreateIssue, issueController.createIssue);
+router.put("/:id", validateIssueId, validateUpdateIssue, issueController.updateIssue);
+router.delete("/:id", validateIssueId, issueController.deleteIssue);
 
 export default router;
 
