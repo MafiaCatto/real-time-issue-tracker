@@ -128,6 +128,8 @@ make clean        # Remove containers, networks, and volumes
 - `DELETE /api/issues/:id` - Delete an issue
 - `POST /api/webhooks/slack` - Receive Slack events and interactions
 
+The health endpoint returns the API status, runtime environment, uptime, and a timestamp. This makes it useful for quick local checks and simple container health verification.
+
 Issue routes validate ids and request bodies before calling the service layer. Invalid ids, empty titles, unsupported issue types, unsupported statuses, and invalid assignee ids return a `400` response with a clear error message.
 
 Example issue payload:

@@ -19,7 +19,12 @@ app.use("/api/issues", issuesRoutes);
 app.use("/api/webhooks", webhooksRoutes);
 
 app.get("/health", (_req, res) => {
-  res.status(200).json({ status: "ok" });
+  res.status(200).json({
+    status: "ok",
+    environment: env.nodeEnv,
+    uptimeSeconds: Math.round(process.uptime()),
+    timestamp: new Date().toISOString(),
+  });
 });
 
 app.use(errorHandler);
