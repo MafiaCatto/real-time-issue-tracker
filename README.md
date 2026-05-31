@@ -128,6 +128,20 @@ make clean        # Remove containers, networks, and volumes
 - `DELETE /api/issues/:id` - Delete an issue
 - `POST /api/webhooks/slack` - Receive Slack events and interactions
 
+Issue routes validate ids and request bodies before calling the service layer. Invalid ids, empty titles, unsupported issue types, unsupported statuses, and invalid assignee ids return a `400` response with a clear error message.
+
+Example issue payload:
+
+```json
+{
+  "title": "Investigate delayed Slack webhook delivery",
+  "description": "Webhook acknowledgements are taking longer than expected.",
+  "type": "BUG",
+  "status": "OPEN",
+  "assignedTo": 1
+}
+```
+
 ## Notes
 
 - The backend listens on port `4000` by default.
