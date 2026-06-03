@@ -8,8 +8,11 @@ export async function getDashboardData() {
     IN_PROGRESS: issues.filter((i) => i.status === 'IN_PROGRESS').length,
     CLOSED: issues.filter((i) => i.status === 'CLOSED').length,
   };
+  const totalIssues = issues.length;
+  const closureRate =
+    totalIssues === 0 ? 0 : Math.round((statusCounts.CLOSED / totalIssues) * 100);
 
   const latestIssues = issues.slice(0, 6);
 
-  return { statusCounts, latestIssues };
+  return { statusCounts, totalIssues, closureRate, latestIssues };
 }

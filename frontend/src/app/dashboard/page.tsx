@@ -5,7 +5,7 @@ import Navigation from '@/components/Navigation';
 import Link from 'next/link';
 
 export default async function DashboardPage() {
-  const { statusCounts, latestIssues } = await getDashboardData();
+  const { statusCounts, totalIssues, closureRate, latestIssues } = await getDashboardData();
 
   return (
     <>
@@ -17,10 +17,11 @@ export default async function DashboardPage() {
           </h1>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          <StatusCard label="Open Issues" count={statusCounts.OPEN} color="red" />
-          <StatusCard label="In Progress" count={statusCounts.IN_PROGRESS} color="blue" />
-          <StatusCard label="Closed" count={statusCounts.CLOSED} color="green" />
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+          <StatusCard label="Total Issues" value={totalIssues} color="cyan" />
+          <StatusCard label="Open Issues" value={statusCounts.OPEN} color="red" />
+          <StatusCard label="In Progress" value={statusCounts.IN_PROGRESS} color="blue" />
+          <StatusCard label="Closed Rate" value={`${closureRate}%`} color="green" />
         </div>
 
         <div className="mt-8">
