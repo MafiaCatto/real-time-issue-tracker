@@ -18,6 +18,17 @@ const typeStyles = {
 };
 
 export default function IssueTable({ issues }: IssueTableProps) {
+  if (issues.length === 0) {
+    return (
+      <div className="rounded-2xl border border-sapphire-800/30 bg-gray-900/40 p-8 text-center">
+        <h2 className="text-xl font-semibold text-white">No issues found</h2>
+        <p className="mt-2 text-gray-400">
+          Try clearing filters or creating a new issue from the API.
+        </p>
+      </div>
+    );
+  }
+
   return (
     <div className="overflow-x-auto border border-sapphire-800/30 rounded-2xl bg-gray-900/40 backdrop-blur-sm">
       <table className="min-w-full">
@@ -67,7 +78,7 @@ export default function IssueTable({ issues }: IssueTableProps) {
                     <span className="text-gray-300">{issue.assignedTo}</span>
                   </div>
                 ) : (
-                  <span className="text-gray-500">—</span>
+                  <span className="text-gray-500">Unassigned</span>
                 )}
               </td>
 

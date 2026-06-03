@@ -34,7 +34,7 @@ export default async function DashboardPage() {
             className="text-sapphire-400 hover:text-sapphire-300 transition-colors text-lg font-medium group"
           >
             View All Issues
-            <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">→</span>
+            <span className="inline-block ml-2 group-hover:translate-x-1 transition-transform">-&gt;</span>
           </Link>
         </div>
       </main>

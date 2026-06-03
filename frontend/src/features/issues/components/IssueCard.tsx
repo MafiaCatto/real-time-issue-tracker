@@ -41,7 +41,7 @@ export default function IssueCard({ issue }: IssueCardProps) {
             {issue.type}
           </span>
           <span className="text-sapphire-400 group-hover:text-sapphire-300 font-medium">
-            View →
+            View -&gt;
           </span>
         </div>
       </div>
