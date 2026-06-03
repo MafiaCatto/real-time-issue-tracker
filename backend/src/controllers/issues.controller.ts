@@ -1,14 +1,26 @@
 // Controller with dependency injection and proper error handling
 import { Request, Response } from "express";
+import { IssueStatus, IssueType } from "@prisma/client";
 import { IIssueService } from "../interfaces/IIssueService";
 import { ResponseFormatter } from "../utils/response";
 import { asyncHandler } from "../middlewares/error.middleware";
+import { IssueListFiltersDto } from "../dtos/issue.dto";
 
 export class IssueController {
   constructor(private readonly issueService: IIssueService) {}
 
   getAllIssues = asyncHandler(async (req: Request, res: Response) => {
-    const issues = await this.issueService.getAllIssues();
+    const filters: IssueListFiltersDto = {};
+
+    if (typeof req.query.status === "string") {
+      filters.status = req.query.status as IssueStatus;
+    }
+
+    if (typeof req.query.type === "string") {
+      filters.type = req.query.type as IssueType;
+    }
+
+    const issues = await this.issueService.getAllIssues(filters);
     res.status(200).json(ResponseFormatter.success(issues));
   });
 

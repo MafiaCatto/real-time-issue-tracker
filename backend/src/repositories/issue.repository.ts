@@ -1,15 +1,17 @@
 // Concrete implementation of IssueRepository
 import { PrismaClient } from "@prisma/client";
 import { IIssueRepository } from "../interfaces/IIssueRepository";
-import { CreateIssueDto, UpdateIssueDto } from "../dtos/issue.dto";
+import { CreateIssueDto, IssueListFiltersDto, UpdateIssueDto } from "../dtos/issue.dto";
 
 export class IssueRepository implements IIssueRepository {
   constructor(private readonly prisma: PrismaClient) {}
 
-  async findAll() {
+  async findAll(filters: IssueListFiltersDto = {}) {
     return this.prisma.issue.findMany({
       where: {
         deletedAt: null, // Only non-deleted issues
+        ...(filters.status && { status: filters.status }),
+        ...(filters.type && { type: filters.type }),
       },
       orderBy: {
         createdAt: "desc",

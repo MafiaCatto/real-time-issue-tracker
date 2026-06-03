@@ -6,6 +6,7 @@ import { IssueRepository } from "../repositories/issue.repository";
 import prisma from "../prisma";
 import {
   validateCreateIssue,
+  validateIssueFilters,
   validateIssueId,
   validateUpdateIssue,
 } from "../middlewares/issue-validation.middleware";
@@ -17,7 +18,7 @@ const issueController = new IssueController(issueService);
 
 const router = Router();
 
-router.get("/", issueController.getAllIssues);
+router.get("/", validateIssueFilters, issueController.getAllIssues);
 router.get("/:id", validateIssueId, issueController.getIssueById);
 router.post("/", validateCreateIssue, issueController.createIssue);
 router.put("/:id", validateIssueId, validateUpdateIssue, issueController.updateIssue);

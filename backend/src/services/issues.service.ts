@@ -1,14 +1,19 @@
 // Service implementation with dependency injection
 import { IIssueService } from "../interfaces/IIssueService";
 import { IIssueRepository } from "../interfaces/IIssueRepository";
-import { IssueResponseDto, CreateIssueDto, UpdateIssueDto } from "../dtos/issue.dto";
+import {
+  IssueResponseDto,
+  CreateIssueDto,
+  IssueListFiltersDto,
+  UpdateIssueDto,
+} from "../dtos/issue.dto";
 import { NotFoundError } from "../utils/errors";
 
 export class IssueService implements IIssueService {
   constructor(private readonly issueRepository: IIssueRepository) {}
 
-  async getAllIssues(): Promise<IssueResponseDto[]> {
-    const issues = await this.issueRepository.findAll();
+  async getAllIssues(filters: IssueListFiltersDto = {}): Promise<IssueResponseDto[]> {
+    const issues = await this.issueRepository.findAll(filters);
     return issues;
   }
 

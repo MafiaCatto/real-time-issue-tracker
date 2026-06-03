@@ -91,6 +91,17 @@ export function validateIssueId(
   next();
 }
 
+export function validateIssueFilters(
+  req: Request,
+  _res: Response,
+  next: NextFunction
+) {
+  validateOptionalIssueType(req.query.type);
+  validateOptionalStatus(req.query.status);
+
+  next();
+}
+
 export function validateCreateIssue(
   req: Request,
   _res: Response,

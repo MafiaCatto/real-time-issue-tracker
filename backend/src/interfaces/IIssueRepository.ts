@@ -1,6 +1,6 @@
 // Repository interface - abstraction for data access
 import { Issue } from "@prisma/client";
-import { CreateIssueDto, UpdateIssueDto } from "../dtos/issue.dto";
+import { CreateIssueDto, IssueListFiltersDto, UpdateIssueDto } from "../dtos/issue.dto";
 
 export type IssueWithAssigned = Issue & {
   assigned: {
@@ -11,7 +11,7 @@ export type IssueWithAssigned = Issue & {
 };
 
 export interface IIssueRepository {
-  findAll(): Promise<IssueWithAssigned[]>;
+  findAll(filters?: IssueListFiltersDto): Promise<IssueWithAssigned[]>;
   findById(id: number): Promise<IssueWithAssigned | null>;
   create(data: CreateIssueDto): Promise<IssueWithAssigned>;
   update(id: number, data: UpdateIssueDto): Promise<IssueWithAssigned>;

@@ -25,3 +25,8 @@ export interface UpdateIssueDto {
   status?: IssueStatus;
   assignedTo?: number;
 }
+
+export interface IssueListFiltersDto {
+  status?: IssueStatus;
+  type?: IssueType;
+}
