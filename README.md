@@ -130,7 +130,19 @@ make clean        # Remove containers, networks, and volumes
 
 The health endpoint returns the API status, runtime environment, uptime, and a timestamp. This makes it useful for quick local checks and simple container health verification.
 
+All API responses include an `x-request-id` response header. If a caller provides an `x-request-id` header, the API reuses it; otherwise it generates a new id for that request.
+
+Issue listing supports optional query filters:
+
+```text
+GET /api/issues?status=OPEN&type=BUG
+```
+
+Supported statuses are `OPEN`, `IN_PROGRESS`, and `CLOSED`. Supported types are `BUG`, `FEATURE`, and `TASK`.
+
 Issue routes validate ids and request bodies before calling the service layer. Invalid ids, empty titles, unsupported issue types, unsupported statuses, and invalid assignee ids return a `400` response with a clear error message.
+
+The issue list page uses the same status and type filters as the API. If the frontend cannot reach the backend during local development, it falls back to bundled mock issues so the UI remains usable.
 
 Example issue payload:
 
