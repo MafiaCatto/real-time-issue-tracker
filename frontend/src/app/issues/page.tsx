@@ -1,9 +1,30 @@
 import IssueTable from '@/features/issues/components/IssueTable';
-import { getLatestIssues } from '@/features/issues/services';
+import IssueFilters from '@/features/issues/components/IssueFilters';
+import { getIssues } from '@/features/issues/services';
+import { IssueStatus, IssueType } from '@/features/issues/types';
 import Navigation from '@/components/Navigation';
 
-export default async function IssuesPage() {
-  const issues = await getLatestIssues();
+type IssuesPageProps = {
+  searchParams: Promise<{
+    status?: string;
+    type?: string;
+  }>;
+};
+
+const statuses: IssueStatus[] = ['OPEN', 'IN_PROGRESS', 'CLOSED'];
+const types: IssueType[] = ['BUG', 'FEATURE', 'TASK'];
+
+export default async function IssuesPage({ searchParams }: IssuesPageProps) {
+  const params = await searchParams;
+  const filters = {
+    ...(params.status && statuses.includes(params.status as IssueStatus) && {
+      status: params.status as IssueStatus,
+    }),
+    ...(params.type && types.includes(params.type as IssueType) && {
+      type: params.type as IssueType,
+    }),
+  };
+  const issues = await getIssues(filters);
 
   return (
     <>
@@ -18,6 +39,7 @@ export default async function IssuesPage() {
           </p>
         </div>
 
+        <IssueFilters activeFilters={filters} />
         <IssueTable issues={issues} />
       </main>
     </>
